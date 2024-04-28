@@ -3,16 +3,28 @@
 
 from models import storage
 from api.v1.views import app_views
-from flask import Flask
+from flask import Flask, jsonify
 from os import getenv
 app = Flask(__name__)
 app.register_blueprint(app_views)
 
 
 @app.teardown_appcontext
-def teardown_appcontext(self):
+def teardown_appcontext(exception):
     """method that close the storage"""
     storage.close()
+
+
+@app.errorhandler(404)
+def not_found(exception):
+    """method that handles 404 error"""
+    response_data = {
+        "error": "Not found"
+    }
+    response = jsonify(response_data)
+    response.status_code = 404
+
+    return(response)
 
 
 if __name__ == "__main__":
