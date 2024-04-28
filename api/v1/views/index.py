@@ -21,13 +21,16 @@ def status():
 @app_views.route('/stats')
 def status():
     """an endpoint that retrieves the number of each objects"""""
-    all_classes = {
-        "amenities": storage.count(Amenity),
-        "cities":  storage.count(City),
-        "places":  storage.count(Place),
-        "reviews":  storage.count(Review),
-        "states":  storage.count(State),
-        "users":  storage.count(User)
+    classes_data = {
+        "amenities": storage.count("Amenity"),
+        "cities": storage.count("City"),
+        "places": storage.count("Place"),
+        "reviews": storage.count("Review"),
+        "states": storage.count("State"),
+        "users": storage.count("User"),
     }
 
-    return jsonify(all_classes)
+    response = jsonify(classes_data)
+    response.status_code = 200
+
+    return response
