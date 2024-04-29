@@ -42,27 +42,27 @@ def create_city(state_id):
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
-    date_from_request = request.get_json()
+    date_req = request.get_json()
 
-    if date_from_request is None:
+    if date_req is None:
         abort(400, "Not a JSON")
-    if not date_from_request.get('name'):
+    if not date_req.get('name'):
         abort(400, "Missing name")
-    date_city = City(name=date_from_request.get('name'), state_id=state_id)
-    post_from_response = API_rest.create(date_city)
-    return post_from_response.get('object dict'), post_from_response.get('status code')
+    date_city = City(name=date_req.get('name'), state_id=state_id)
+    post_resp = API_rest.create(date_city)
+    return post_resp.get('object dict'), post_resp.get('status code')
 
 
 @app_views.route('/cities/<city_id>', methods=['PUT'])
 def update_city(city_id):
     """Updates a City object"""
-    date_from_request = request.get_json()
-    if not date_from_request:
+    date_req = request.get_json()
+    if not date_req:
         abort(400, "Not a JSON")
 
     ignored_arguments = ['id', 'created_at', 'updated_at']
-    put_from_response = API_rest.update(
-        City, city_id, ignored_arguments, date_from_request)
-    if put_from_response.get('status code') == 404:
+    put_resp = API_rest.update(
+        City, city_id, ignored_arguments, date_req)
+    if put_resp.get('status code') == 404:
         abort(404)
-    return put_from_response.get('object dict'), put_from_response.get('status code')
+    return put_resp.get('object dict'), put_resp.get('status code')

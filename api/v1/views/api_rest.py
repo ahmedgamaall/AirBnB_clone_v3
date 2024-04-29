@@ -35,17 +35,18 @@ class API_rest():
         storage.save()
         return {'status code': 201, 'object dict': obj.to_dict()}
 
-    def update(cls, state_id, ignored_arguments, date_from_request):
+    def update(cls, state_id, ignored_arguments, date_req):
         """Method for put an object"""
         all_date_objects = storage.all(cls)
         arguments = dict(
-            filter(lambda a: a[0] not in ignored_arguments, date_from_request.items()))
+            filter(lambda a: a[0] not in ignored_arguments, date_req.items()))
 
         if not all_date_objects.get(cls.__name__ + '.' + state_id):
             return {'status code': 404}
 
         for key, value in arguments.items():
-            setattr(all_date_objects[cls.__name__ + '.' + state_id], key, value)
+            setattr(all_date_objects[cls.__name__ + '.' + state_id],
+                    key, value)
         all_date_objects[cls.__name__ + '.' + state_id].save()
         storage.reload()
         return {'status code': 200, 'object dict':

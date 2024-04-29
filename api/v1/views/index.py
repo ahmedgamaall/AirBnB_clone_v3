@@ -21,7 +21,7 @@ def status():
 def stats():
     """an endpoint that retrieves the number of each objects by type"""
     classes_dict = {"amenities": Amenity, "cities": City, "places": Place,
-               "reviews": Review, "states": State, "users": User}
+                    "reviews": Review, "states": State, "users": User}
     counter_dict = {}
     for key, value in classes_dict.items():
         counter_dict[key] = storage.count(value)

@@ -56,9 +56,9 @@ def create_place(city_id):
     if user is None:
         abort(404)
     date_place = Place(name=date_from_request.get('name'), user_id=user.id,
-                      city_id=city_id)
-    post_from_response = API_rest.create(date_place)
-    return post_from_response.get('object dict'), post_from_response.get('status code')
+                       city_id=city_id)
+    post_resp = API_rest.create(date_place)
+    return post_resp.get('object dict'), post_resp.get('status code')
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'])
@@ -67,12 +67,12 @@ def update_place(place_id):
     date_from_request = request.get_json()
     if not date_from_request:
         abort(400, "Not a JSON")
-    ignored_arguments = ['id', 'user_id', 'city_id', 'created_at', 'updated_at']
-    put_from_response = API_rest.update(
-        Place, place_id, ignored_arguments, date_from_request)
-    if put_from_response.get('status code') == 404:
+    ignored_args = ['id', 'user_id', 'city_id', 'created_at', 'updated_at']
+    put_resp = API_rest.update(
+        Place, place_id, ignored_args, date_from_request)
+    if put_resp.get('status code') == 404:
         abort(404)
-    return put_from_response.get('object dict'), put_from_response.get('status code')
+    return put_resp.get('object dict'), put_resp.get('status code')
 
 
 @app_views.route('/places_search', methods=['POST'])
@@ -88,7 +88,7 @@ def search_places():
     amenities_data = date_from_request.get('amenities', [])
 
     if date_from_request == {} or (states_data == [] and
-                              cities_data == [] and amenities_data == []):
+                                   cities_data == [] and amenities_data == []):
         all_places = storage.all(Place)
         all_places_list = list(map(lambda p: p.to_dict(), all_places.values()))
         return jsonify(all_places_list)

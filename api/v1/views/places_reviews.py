@@ -55,9 +55,9 @@ def create_review(place_id):
     if user is None:
         abort(404)
     date_review = Review(text=date_from_request.get('text'), user_id=user.id,
-                        place_id=place_id)
-    post_from_response = API_rest.create(date_review)
-    return post_from_response.get('object dict'), post_from_response.get('status code')
+                         place_id=place_id)
+    post_res = API_rest.create(date_review)
+    return post_res.get('object dict'), post_res.get('status code')
 
 
 @app_views.route('/reviews/<review_id>', methods=['PUT'])
@@ -67,9 +67,9 @@ def update_review(review_id):
     if not date_from_request:
         return jsonify({'error': 'Not a JSON'}), 400
 
-    ignored_arguments = ['id', 'user_id', 'place_id', 'created_at', 'updated_at']
-    put_from_response = API_rest.update(
-        Review, review_id, ignored_arguments, date_from_request)
-    if put_from_response.get('status code') == 404:
+    ignored_args = ['id', 'user_id', 'place_id', 'created_at', 'updated_at']
+    put_res = API_rest.update(
+        Review, review_id, ignored_args, date_from_request)
+    if put_res.get('status code') == 404:
         abort(404)
-    return put_from_response.get('object dict'), put_from_response.get('status code')
+    return put_res.get('object dict'), put_res.get('status code')

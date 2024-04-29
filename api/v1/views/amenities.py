@@ -41,8 +41,8 @@ def create_amenity():
     if not date_from_request.get('name'):
         return jsonify({'error': 'Missing name'}), 400
     date_amenity = Amenity(name=date_from_request.get('name'))
-    post_from_response = API_rest.create(date_amenity)
-    return post_from_response.get('object dict'), post_from_response.get('status code')
+    create_resp = API_rest.create(date_amenity)
+    return create_resp.get('object dict'), create_resp.get('status code')
 
 
 @app_views.route('/amenities/<amenity_id>', methods=['PUT'])
@@ -53,8 +53,8 @@ def update_amenity(amenity_id):
         abort(400, "Not a JSON")
 
     ignored_arguments = ['id', 'created_at', 'updated_at']
-    put_from_response = API_rest.update(
+    update_resp = API_rest.update(
         Amenity, amenity_id, ignored_arguments, date_from_request)
-    if put_from_response.get('status code') == 404:
+    if update_resp.get('status code') == 404:
         abort(404)
-    return put_from_response.get('object dict'), put_from_response.get('status code')
+    return update_resp.get('object dict'), update_resp.get('status code')

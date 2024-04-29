@@ -40,8 +40,8 @@ def create_state():
     if not date_from_request.get('name'):
         abort(400, "Missing name")
     date_state = State(name=date_from_request.get('name'))
-    post_from_response = API_rest.create(date_state)
-    return post_from_response.get('object dict'), post_from_response.get('status code')
+    post_res = API_rest.create(date_state)
+    return post_res.get('object dict'), post_res.get('status code')
 
 
 @app_views.route('/states/<state_id>', methods=['PUT'])
@@ -52,8 +52,8 @@ def update_state(state_id):
         return jsonify({'error': 'Not a JSON'}), 400
 
     ignored_arguments = ['id', 'created_at', 'updated_at']
-    put_from_response = API_rest.update(
+    put_res = API_rest.update(
         State, state_id, ignored_arguments, date_from_request)
-    if put_from_response.get('status code') == 404:
+    if put_res.get('status code') == 404:
         abort(404)
-    return put_from_response.get('object dict'), put_from_response.get('status code')
+    return put_res.get('object dict'), put_res.get('status code')

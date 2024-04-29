@@ -42,8 +42,8 @@ def create_user():
     if not date_from_request.get('password'):
         return jsonify({'error': 'Missing password'}), 400
     date_user = User(**date_from_request)
-    post_from_response = API_rest.create(date_user)
-    return post_from_response.get('object dict'), post_from_response.get('status code')
+    post_res = API_rest.create(date_user)
+    return post_res.get('object dict'), post_res.get('status code')
 
 
 @app_views.route('/users/<user_id>', methods=['PUT'])
@@ -54,8 +54,8 @@ def update_user(user_id):
         abort(400, "Not a JSON")
 
     ignored_arguments = ['id', 'created_at', 'updated_at', 'email']
-    put_from_response = API_rest.update(
+    put_res = API_rest.update(
         User, user_id, ignored_arguments, date_from_request)
-    if put_from_response.get('status code') == 404:
+    if put_res.get('status code') == 404:
         abort(404)
-    return put_from_response.get('object dict'), put_from_response.get('status code')
+    return put_res.get('object dict'), put_res.get('status code')
