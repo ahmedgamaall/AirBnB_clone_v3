@@ -12,12 +12,13 @@ from models.base_model import BaseModel
 from models.city import City
 from models.place import Place
 from models.review import Review
-from models.state import State
+from models.ac_state import State
 from models.user import User
 import json
 import os
 import pep8
 import unittest
+
 FileStorage = file_storage.FileStorage
 classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
            "Place": Place, "Review": Review, "State": State, "User": User}
@@ -25,6 +26,7 @@ classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
 
 class TestFileStorageDocs(unittest.TestCase):
     """Tests to check the documentation and style of FileStorage class"""
+
     @classmethod
     def setUpClass(cls):
         """Set up for the doc tests"""
@@ -70,6 +72,7 @@ test_file_storage.py'])
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
+
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_all_returns_dict(self):
         """Test that all returns the FileStorage.__objects attr"""
@@ -113,3 +116,25 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing DB storage")
+    def test_count(self):
+        """Test that count returns number of objects"""
+        state_storage = FileStorage()
+        state_count = state_storage.count()
+        self.assertEqual(type(state_count), int)
+        self.assertEqual(state_count, len(state_storage.all()))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing DB storage")
+    def test_get(self):
+        """Test that get returns the object"""
+        storage = FileStorage()
+        state_name = "California"
+        ac_state = State(name="California")
+        ac_state.save()
+        state_id = ac_state.id
+        state_name = ac_state.name
+        get_state = storage.get(State, state_id)
+        self.assertEqual(ac_state.name, state_name)
+        self.assertEqual(state_id, get_state.id)
+        self.assertEqual(state_name, get_state.name)

@@ -2,6 +2,7 @@
 """
 Contains the class DBStorage
 """
+import urllib.parse
 
 import models
 from models.amenity import Amenity
@@ -36,9 +37,22 @@ class DBStorage:
                                       format(HBNB_MYSQL_USER,
                                              HBNB_MYSQL_PWD,
                                              HBNB_MYSQL_HOST,
-                                             HBNB_MYSQL_DB),  echo=False)
+                                             HBNB_MYSQL_DB))
         if HBNB_ENV == "test":
             Base.metadata.drop_all(self.__engine)
+
+    def get(self, cls, id: str):
+        """Get Object By Id"""
+        if not cls or not cls:
+            return None
+        return self.__session.query(cls).filter_by(id=id).first()
+
+    def count(self, cls=None):
+        """count number of objects"""
+        if cls:
+            return self.__session.query(cls).count()
+        return sum(map(lambda c: self.__session.query(c).count(),
+                       classes.values()))
 
     def all(self, cls=None):
         """query on the current database session"""
@@ -71,33 +85,6 @@ class DBStorage:
         Session = scoped_session(sess_factory)
         self.__session = Session
 
-    def get(self, cls, id):
-        """Method to retrieve one object."""
-        all_class = self.all(cls)
-
-        for obj in all_class.values():
-            if id == str(obj.id):
-                return obj
-
-        return None
-
-    def count(self, cls=None):
-        """Returns the object based on the class and its ID,
-        or None if not found"""
-        if not cls:
-            all_classes = self.all()
-            return len(all_classes)
-
-        for key, value in classes.items():
-            if cls == key or cls == value:
-                classes_items = self.all(cls)
-                return len(classes_items)
-
-        if cls not in classes.values():
-            return
-
     def close(self):
-        """Returns the number of objects in storage matching the given class.
-        If no class is passed,
-        returns the count of all objects in storage."""
+        """call remove() method on the private session attribute"""
         self.__session.remove()
